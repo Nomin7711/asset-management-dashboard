@@ -1,18 +1,26 @@
-# Asset Management Dashboard – Implementation Notes
+# Asset Management System – Submission Notes
 
-## Setup Instructions
+Hi, my name is **Nomin** and I built this Asset Management Dashboard using **React**, **TypeScript**, **Vite**, **Material UI (MUI)**, **TanStack Query**, **React Router**, **Recharts**, and **React Hook Form** with **Zod**. This dashboard lets you view and manage industrial assets (pumps, compressors, generators), see live telemetry and power history/forecast, and create or update asset configuration with validated forms. It includes a responsive layout with light/dark theme and optional real-time updates via WebSocket.
+
+---
+
+## 1. Setup instructions
+
+The source code is included in the submission email and is also pushed to GitHub—feel free to check it out there:
+
+**https://github.com/Nomin7711/asset-management-dashboard**
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- Docker (optional, for running the API)
+- Node.js 18+ and npm  
+- Docker (optional, for running the backend API)
 
-### 1. Start the backend API
+### Run the app
 
-From the project root:
+**1. Start the backend API** (from project root):
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Or from the `api/` directory:
@@ -23,9 +31,9 @@ docker build -t asset-management-api .
 docker run -p 8000:8000 asset-management-api
 ```
 
-Ensure the API is available at **http://localhost:8000** (see http://localhost:8000/docs for interactive docs).
+API: **http://localhost:8000** · Docs: **http://localhost:8000/docs**
 
-### 2. Install and run the frontend
+**2. Install and run the frontend:**
 
 ```bash
 cd app
@@ -33,55 +41,53 @@ npm install
 npm run dev
 ```
 
-The app will be at **http://localhost:5173** (or the port Vite prints).
+App: **http://localhost:5173** (or the port Vite prints).
 
-To build for production:
+**Production build:** `npm run build` then `npm run preview`.
 
-```bash
-npm run build
-npm run preview
-```
+**Override API URL:** `VITE_API_URL=http://your-host:8000 npm run dev`
 
-### 3. API URL
-
-The frontend uses `http://localhost:8000` by default. To override (e.g. for a different host or port), set:
-
-```bash
-VITE_API_URL=http://your-api-host:8000 npm run dev
-```
+**Tests:** `npm run test` (watch) or `npm run test:run` (single run).
 
 ---
 
-## Framework and library choices
+## 2. Architecture overview & design
 
-- **React 18 + TypeScript** – Used for familiarity and to showcase clear, type-safe code. The challenge allows any framework; the role’s production stack (e.g. Vue3/Vuetify) can be adopted on the job.
-- **Vite** – Fast dev server and simple production build.
-- **Material UI (MUI)** – Material Design component set, aligned with the JD’s mention of “Vuetify or similar Material Design libraries.” Provides layout, theming, and reusable components (tables, forms, chips, etc.).
-- **TanStack Query (React Query)** – Server state for assets, telemetry, power, and configuration. Handles loading/error states, caching, and refetching. Keeps UI in sync with the backend and supports the optional WebSocket telemetry updates.
-- **React Router** – Single-dashboard route and layout for navigation.
-- **Recharts** – Power history/forecast line chart. React-friendly API; supports two series (history vs forecast), dual Y-axes (power and efficiency), and clear differentiation (solid vs dashed, colors).
-- **React Hook Form + Zod + @hookform/resolvers** – Form state and client-side validation matching the API’s rules (enums, ranges, email, power_factor ≠ 0). Zod schema mirrors the backend; server validation errors are surfaced via a helper and displayed in the form.
-- **Axios** – HTTP client with a small typed API wrapper; error handling for validation responses.
-- **WebSocket (native)** – Real-time telemetry via `ws://localhost:8000/ws/telemetry`. The Telemetry panel subscribes and updates the displayed metrics when messages arrive, while still using the REST endpoint for initial load.
+**Framework and library choices:** React 19 + TypeScript, Vite, MUI, TanStack Query, React Router, Recharts, React Hook Form + Zod, Axios. Vitest and Testing Library for unit and integration tests.
+
+**Why this stack:**  
+Because the project execution length was short, I chose what I use the most for **familiarity** and speed: TypeScript for type safety and clear API contracts, MUI for a consistent Material Design UI and theming, and TanStack Query for server state, caching, and efficient data fetching. Vite gives a fast dev server and simple build; React Hook Form with Zod keeps form state and validation in sync with the API rules.
+
+**Advantages:**  
+Strong typing end-to-end, predictable loading/error states, reusable components, and a single place for server state (React Query) so the UI stays in sync with the backend. Real-time telemetry is handled by combining REST for initial load and WebSocket for live updates.
+
+**Practical skills applied:**  
+Component structure and composition, custom hooks, **memoization** (e.g. `useMemo` for derived data and chart stats) to avoid unnecessary re-renders, colocated tests with shared setup, client- and server-side validation with clear error display, and responsive layout with a single dashboard across breakpoints.
 
 ---
 
-## What I would improve with more time
+## 3. Future considerations
 
-- **Tests** – Unit tests (Vitest) for API client, Zod schema, and key components; one E2E (Playwright) for “select asset → see telemetry” and “submit configuration form.”
-- **CI/CD** – GitHub Actions workflow: install, lint, typecheck, build, and run the above tests.
+What I'd improve and some fresh ideas on the current codebase:
+
+- **E2E tests** – Playwright (or Cypress) for critical flows: select asset → see telemetry, submit configuration form.
+- **CI/CD** – GitHub Actions: install, lint, typecheck, build, and run unit/integration (and E2E when added).
 - **Error handling** – Global error boundary and clearer messaging when the API is unreachable.
-- **Accessibility** – ARIA labels, keyboard navigation, and focus management, especially in the asset list and form.
-- **Chart UX** – Time axis with actual timestamps (e.g. “8h ago” to “now” to “+16h”), and optional toggle for efficiency vs power only.
-- **Configuration** – Invalidate or refetch configuration list after save so other views stay consistent; optional “unsaved changes” warning when leaving the form.
+- **Accessibility** – ARIA labels, keyboard navigation, and focus management in the asset list and configuration form.
+- **Charts** – Time axis with real timestamps ("8h ago" → "now" → "+16h"); optional toggle for efficiency vs power only; tooltips with more context.
+- **Configuration UX** – Invalidate/refetch configuration list after save; "unsaved changes" warning when leaving the form.
+- **Ideas for later** – Asset comparison view (side-by-side metrics), simple alerts/notifications for status changes, and export of configuration or power data (e.g. CSV/PDF).
 
 ---
 
-## Assumptions and decisions
+## 4. Summary
 
-- **API base URL** – Default `http://localhost:8000`; configurable via `VITE_API_URL` so the same build can target different environments.
-- **Configuration 404** – If `GET /api/configuration/{asset_id}` returns 404, the form is prefilled with asset name and location only; all other fields use the client-side defaults (e.g. priority “medium,” maintenance_interval_days 30).
-- **Form reset on asset change** – When the user selects a different asset, the configuration form is reset and then repopulated from the new asset and/or its stored configuration when the queries resolve.
-- **WebSocket and REST** – Telemetry panel uses REST for initial load and subscribes to the WebSocket for live updates; when a WebSocket message contains data for the selected asset, that value is shown and a “Live” chip is displayed.
-- **Power chart** – History and forecast are plotted as two series (solid blue and dashed orange) on a combined timeline; efficiency is a separate line (right Y-axis). Zero reference line indicates consumption vs generation.
-- **Responsive layout** – Grid layout: asset list stacks above the detail panel on small screens (xs), and sits beside it on medium and up (md). No separate mobile navigation; the same dashboard works across breakpoints.
+**Assumptions I made:**  
+API base URL defaults to `http://localhost:8000` and is overridable via `VITE_API_URL`. If `GET /api/configuration/{asset_id}` returns 404, the form is prefilled with asset name and location only; other fields use client-side defaults. When the user switches asset, the form resets and repopulates from the new asset and its configuration. Telemetry uses REST for initial load and WebSocket for live updates; when a message is for the selected asset, the panel shows the value and a "Live" chip. The power chart shows history and forecast as two series with efficiency on a second Y-axis; zero reference line for consumption vs generation. One responsive layout for all breakpoints.
+
+**Experience:**  
+Working with **real-time data** and learning about the API's telemetry and power history/forecast structure was insightful. I spent about **4 hours** in total: around **40 minutes** understanding the data and researching similar asset dashboards on the internet, then choosing a design and implementing. My solution and graphs are focused rather than exhaustive—I thought focusing on the **main functionality** and providing a **clear structure** and **user-friendly interface** would make the dashboard easy to use, and I paid attention to that.
+
+I added **test cases** (unit and integration with Vitest and Testing Library), handled **errors and validation** (client-side with Zod and server-side errors surfaced in the form), and paid attention to **efficient data fetching** using React Query and React hooks (e.g. `useMemo`) to store computed results and avoid unnecessary re-renders. I chose **TypeScript** and **MUI** for type safety and a consistent, maintainable UI.
+
+This experience was challenging and brought the creativity out of me. Thanks for giving me this opportunity—I hope we'll talk soon.
