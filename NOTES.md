@@ -92,8 +92,11 @@ What I'd improve and some fresh ideas on the current codebase:
 
 **Assumptions I made:**  
 **Form:** When I select a different asset, the form clears and fills in with that asset’s details and its saved configuration.
+
 **Telemetry:** The first load of telemetry comes from the API after that, live numbers are updated over WebSocket. If an update is for the asset I'm viewing, I show the new value and a “Live” badge.
+
 **Power chart:** One line for past power data, one for forecast. Efficiency is on a separate axis. The zero line separates consumption (positive) from generation (negative).
+
 **Layout:** One layout that works on phone, tablet, and desktop.
 
 **Experience:**  
