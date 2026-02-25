@@ -1,6 +1,18 @@
 # Asset Management System – Submission Notes
 
-Hi, my name is **Nomin** and I built this Asset Management Dashboard using **React**, **TypeScript**, **Vite**, **Material UI (MUI)**, **TanStack Query**, **React Router**, **Recharts**, and **React Hook Form** with **Zod**. This dashboard lets you view and manage industrial assets (pumps, compressors, generators), see live telemetry and power history/forecast, and create or update asset configuration with validated forms. It includes a responsive layout with light/dark theme and optional real-time updates via WebSocket.
+Hi, 👋 My name is **Nomin** and I built this Asset Management Dashboard using **React**, **TypeScript**, **Vite**, **Material UI (MUI)**, **TanStack Query**, **React Router**, **Recharts**, and **React Hook Form** with **Zod**. 
+
+This dashboard lets you view and manage industrial assets (pumps, compressors, generators), see live telemetry and power history/forecast, and create or update asset configuration with validated forms. It includes a responsive layout with light/dark theme and optional real-time updates via WebSocket.
+
+### Dashboard summary
+
+- **Asset list** — All assets from API with name, type, location, status
+- **Telemetry** — Current metrics (temperature, pressure, vibration, power) for selected asset(s), easy to read
+- **Power chart** — 8h history + 16h forecast; distinguish actual vs forecast; consumption & efficiency; support positive (consumption) and negative (generation) values
+- **Config form** — Create/update asset config; client-side validation; show server errors; clear success/failure feedback
+- **Real-time** — WebSocket at `ws://localhost:8000/ws/telemetry` for live telemetry
+- **Responsive** — Works on different screen sizes
+- **Bonus** — Interactive charts, strong state management, unit/integration tests
 
 ---
 

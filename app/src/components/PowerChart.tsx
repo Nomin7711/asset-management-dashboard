@@ -10,9 +10,49 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import type { TooltipProps } from "recharts";
 import { usePower } from "@/api";
 import type { PowerDataPoint } from "@/api/types";
 import { formatTime } from "@/utils";
+
+function PowerChartTooltip({
+  active,
+  payload,
+  label,
+}: TooltipProps<number, string>) {
+  if (!active || !payload?.length || !label) return null;
+  const p = payload[0]?.payload as {
+    powerHistory: number | null;
+    powerForecast: number | null;
+    efficiency: number | null;
+  } | undefined;
+  if (!p) return null;
+  const fmt = (v: number | null, unit: string) =>
+    v != null && !Number.isNaN(v)
+      ? unit === "kW"
+        ? `${Number(v).toFixed(1)} kW`
+        : `${Number(v).toFixed(1)}%`
+      : "—";
+  return (
+    <Paper
+      variant="outlined"
+      sx={{ px: 1.5, py: 1, minWidth: 160 }}
+    >
+      <Typography variant="caption" display="block" color="text.secondary">
+        {label}
+      </Typography>
+      <Typography variant="body2">
+        History: {fmt(p.powerHistory, "kW")}
+      </Typography>
+      <Typography variant="body2">
+        Forecast: {fmt(p.powerForecast, "kW")}
+      </Typography>
+      <Typography variant="body2">
+        Efficiency: {fmt(p.efficiency, "%")}
+      </Typography>
+    </Paper>
+  );
+}
 
 interface PowerChartProps {
   assetId: string;
@@ -109,21 +149,7 @@ export function PowerChart({ assetId }: PowerChartProps) {
                 style: { textAnchor: "middle" },
               }}
             />
-            <Tooltip
-              formatter={(value: number, name: string) => [
-                typeof value === "number" &&
-                (name === "powerHistory" || name === "powerForecast")
-                  ? `${value.toFixed(1)} kW`
-                  : `${Number(value).toFixed(1)}%`,
-                name === "powerHistory"
-                  ? "History (kW)"
-                  : name === "powerForecast"
-                    ? "Forecast (kW)"
-                    : "Efficiency %",
-              ]}
-              labelFormatter={(label) => `Time: ${label}`}
-              contentStyle={{ borderRadius: 8 }}
-            />
+            <Tooltip content={<PowerChartTooltip />} />
             <Legend wrapperStyle={{ paddingTop: 8 }} />
             <ReferenceLine
               yAxisId="power"
@@ -157,7 +183,7 @@ export function PowerChart({ assetId }: PowerChartProps) {
               type="monotone"
               dataKey="efficiency"
               name="Efficiency %"
-              stroke="#5a8c69"
+              stroke="#1565c0"
               strokeWidth={1.5}
               dot={false}
               connectNulls

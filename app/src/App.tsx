@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Layout } from "@/Layout";
-import { Dashboard } from "@/pages/Dashboard";
-import { AssetDetail } from "@/pages/AssetDetail";
+import { Dashboard } from "@/views/Dashboard";
+import { AssetDetail } from "@/views/AssetDetail";
 
 const GREEN_PRIMARY = "#4a7c59";
 
