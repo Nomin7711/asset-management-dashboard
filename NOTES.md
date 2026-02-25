@@ -90,13 +90,11 @@ What I'd improve and some fresh ideas on the current codebase:
 
 ## 4. Summary
 
-**Assumptions I made:**  
+**Assumptions I made:**
+
 **Form:** When I select a different asset, the form clears and fills in with that asset’s details and its saved configuration.
-
 **Telemetry:** The first load of telemetry comes from the API after that, live numbers are updated over WebSocket. If an update is for the asset I'm viewing, I show the new value and a “Live” badge.
-
 **Power chart:** One line for past power data, one for forecast. Efficiency is on a separate axis. The zero line separates consumption (positive) from generation (negative).
-
 **Layout:** One layout that works on phone, tablet, and desktop.
 
 **Experience:**  
@@ -104,4 +102,4 @@ Working with **real-time data** and learning about the API's telemetry and power
 
 I added **test cases** (unit and integration with Vitest and Testing Library), handled **errors and validation** (client-side with Zod and server-side errors surfaced in the form), and paid attention to **efficient data fetching** using React Query and React hooks (e.g. `useMemo`) to store computed results and avoid unnecessary re-renders. I chose **TypeScript** and **MUI** for type safety and a consistent, maintainable UI.
 
-This experience was challenging and brought the creativity out of me. Thanks for giving me this opportunity. I hope we'll talk soon.
+This experience was challenging and brought the creativity out of me. Thanks for giving me this opportunity. I hope we'll talk soon. ✨ 🙂
